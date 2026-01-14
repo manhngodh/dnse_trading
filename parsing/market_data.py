@@ -5,7 +5,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Any, Optional
 
-from adapters.dnse.common.types import DNSEMarketDataTick
+from ..common.types import DNSEMarketDataTick
 
 
 def parse_market_data_tick(symbol: str, data: dict) -> Optional[DNSEMarketDataTick]:

@@ -8,15 +8,15 @@ from typing import Any, Optional
 
 import aiohttp
 
-from adapters.dnse.common.constants import (
+from ..common.constants import (
     DNSE_API_BASE_URL,
     HTTP_TIMEOUT,
     MAX_RETRIES,
     RETRY_DELAY_SECONDS,
 )
-from adapters.dnse.common.enums import DNSEOrderSide, DNSEOrderType
-from adapters.dnse.http.auth import DNSEAuthProvider
-from adapters.dnse.http.endpoints import (
+from ..common.enums import DNSEOrderSide, DNSEOrderType
+from .auth import DNSEAuthProvider
+from .endpoints import (
     get_account_info_url,
     get_base_buying_power_url,
     get_base_cancel_order_url,

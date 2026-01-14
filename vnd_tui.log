@@ -1,0 +1,32 @@
+2025-12-31 08:46:52,256 - dnse_trading.rest.auth - INFO - Attempting login for user: 0968926458
+2025-12-31 08:46:53,008 - dnse_trading.rest.auth - INFO - Login successful. JWT expires at: 2025-12-31 16:46:53.008213
+2025-12-31 08:46:53,008 - dnse_trading.rest.client - INFO - DNSE HTTP client connected
+2025-12-31 08:46:53,727 - dnse_trading.websocket.client - INFO - Connecting to datafeed-lts-krx.dnse.com.vn:443
+2025-12-31 08:46:53,728 - dnse_trading.websocket.client - WARNING - Not connected, queuing StockInfo for VND
+2025-12-31 08:46:53,728 - dnse_trading.websocket.client - WARNING - Not connected, queuing TopPrice for VND
+2025-12-31 08:46:54,812 - dnse_trading.websocket.client - INFO - Connected to DNSE market data WebSocket
+2025-12-31 08:46:54,812 - dnse_trading.websocket.client - INFO - Resubscribed to plaintext/quotes/krx/mdds/stockinfo/v1/roundlot/symbol/VND
+2025-12-31 08:46:54,812 - dnse_trading.websocket.client - INFO - Resubscribed to plaintext/quotes/krx/mdds/topprice/v1/roundlot/symbol/VND
+2025-12-31 08:46:55,253 - dnse_trading.websocket.client - INFO - TopPrice Payload: {"marketId":"MARKET_ID_STO","boardId":"BOARD_ID_G1","isin":"VN000000VND7","symbol":"VND","sendingTime":"2025-12-31T07:45:08.040Z","bid":[{"price":19.4,"qtty":63750.0},{"price":19.35,"qtty":34600.0},{"price":19.3,"qtty":26480.0}],"offer":[{"price":19.45,"qtty":770.0},{"price":19.5,"qtty":18270.0},{"price":19.55,"qtty":12160.0}],"boardIdOriginal":"BOARD_ID_G1"}
+2025-12-31 16:17:05,752 - dnse_trading.rest.auth - INFO - Refreshing JWT token...
+2025-12-31 16:17:05,835 - dnse_trading.rest.auth - INFO - Attempting login for user: 0968926458
+2025-12-31 16:17:06,654 - dnse_trading.rest.auth - INFO - Login successful. JWT expires at: 2026-01-01 00:17:06.654433
+2025-12-31 16:46:52,108 - dnse_trading.websocket.client - WARNING - Disconnected from DNSE market data (rc=7)
+2025-12-31 16:46:54,185 - dnse_trading.websocket.client - ERROR - MQTT connection failed with code: 4
+2025-12-31 16:46:54,185 - dnse_trading.websocket.client - WARNING - Disconnected from DNSE market data (rc=5)
+2025-12-31 16:46:57,309 - dnse_trading.websocket.client - ERROR - MQTT connection failed with code: 4
+2025-12-31 16:46:57,310 - dnse_trading.websocket.client - WARNING - Disconnected from DNSE market data (rc=5)
+2025-12-31 16:47:02,371 - dnse_trading.websocket.client - ERROR - MQTT connection failed with code: 4
+2025-12-31 16:47:02,372 - dnse_trading.websocket.client - WARNING - Disconnected from DNSE market data (rc=5)
+2025-12-31 16:47:11,459 - dnse_trading.websocket.client - ERROR - MQTT connection failed with code: 4
+2025-12-31 16:47:11,460 - dnse_trading.websocket.client - WARNING - Disconnected from DNSE market data (rc=5)
+2025-12-31 16:47:28,574 - dnse_trading.websocket.client - ERROR - MQTT connection failed with code: 4
+2025-12-31 16:47:28,575 - dnse_trading.websocket.client - WARNING - Disconnected from DNSE market data (rc=5)
+2025-12-31 16:48:01,693 - dnse_trading.websocket.client - ERROR - MQTT connection failed with code: 4
+2025-12-31 16:48:01,693 - dnse_trading.websocket.client - WARNING - Disconnected from DNSE market data (rc=5)
+2025-12-31 16:49:06,744 - dnse_trading.websocket.client - ERROR - MQTT connection failed with code: 4
+2025-12-31 16:49:06,744 - dnse_trading.websocket.client - WARNING - Disconnected from DNSE market data (rc=5)
+2025-12-31 16:51:07,787 - dnse_trading.websocket.client - ERROR - MQTT connection failed with code: 4
+2025-12-31 16:51:07,788 - dnse_trading.websocket.client - WARNING - Disconnected from DNSE market data (rc=5)
+2025-12-31 16:53:08,866 - dnse_trading.websocket.client - ERROR - MQTT connection failed with code: 4
+2025-12-31 16:53:08,866 - dnse_trading.websocket.client - WARNING - Disconnected from DNSE market data (rc=5)

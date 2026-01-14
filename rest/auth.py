@@ -8,7 +8,7 @@ from typing import Callable, Optional
 
 import aiohttp
 
-from adapters.dnse.common.constants import (
+from ..common.constants import (
     CONTENT_TYPE_JSON,
     DNSE_API_BASE_URL,
     HEADER_AUTHORIZATION,
@@ -18,8 +18,8 @@ from adapters.dnse.common.constants import (
     TOKEN_EXPIRY_SECONDS,
     TOKEN_REFRESH_BUFFER_SECONDS,
 )
-from adapters.dnse.common.types import DNSETokens
-from adapters.dnse.http.endpoints import get_login_url, get_trading_token_url
+from ..common.types import DNSETokens
+from .endpoints import get_login_url, get_trading_token_url
 
 
 _log = logging.getLogger(__name__)

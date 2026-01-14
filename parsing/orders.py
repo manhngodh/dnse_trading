@@ -5,7 +5,7 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Any, Optional
 
-from adapters.dnse.common.types import (
+from ..common.types import (
     DNSEAccountInfo,
     DNSEBuyingPower,
     DNSEDerivativePosition,

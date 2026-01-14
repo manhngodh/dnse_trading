@@ -1,26 +1,16 @@
 # DNSE Lightspeed KRX Adapter
 """
-DNSE Lightspeed API trading adapter for Vietnamese securities (KRX system).
+DNSE Lightspeed API trading client.
 
-This package provides live trading capabilities through the DNSE API:
-- DNSEDataClient: Real-time market data via WebSocket (MQTT)
-- DNSEExecClient: Order execution via REST API
-
-Usage:
-    from adapters.dnse import (
-        DNSEDataClientConfig,
-        DNSEExecClientConfig,
-        DNSELiveDataClientFactory,
-        DNSELiveExecClientFactory,
-    )
+This package provides access to the DNSE API:
+- DNSEHttpClient: HTTP client for REST API
+- DNSEWebSocketClient: WebSocket client for real-time market data
 """
 
-from adapters.dnse.config import DNSEDataClientConfig, DNSEExecClientConfig
-from adapters.dnse.factories import DNSELiveDataClientFactory, DNSELiveExecClientFactory
+from .rest.client import DNSEHttpClient
+from .websocket.client import DNSEWebSocketClient
 
 __all__ = [
-    "DNSEDataClientConfig",
-    "DNSEExecClientConfig",
-    "DNSELiveDataClientFactory",
-    "DNSELiveExecClientFactory",
+    "DNSEHttpClient",
+    "DNSEWebSocketClient",
 ]

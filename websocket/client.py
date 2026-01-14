@@ -19,12 +19,15 @@ except ImportError:
     HAS_MQTT = False
     mqtt = None
 
-from adapters.dnse.common.constants import (
+from ..common.constants import (
     DNSE_MARKET_DATA_WSS_HOST,
     DNSE_MARKET_DATA_WSS_PATH,
     DNSE_MARKET_DATA_WSS_PORT,
+    MQTT_TOPIC_STOCK_INFO,
+    MQTT_TOPIC_TOP_PRICE,
 )
-from adapters.dnse.common.types import DNSEMarketDataTick
+from ..common.types import DNSEMarketDataTick, DNSEOrderBookEntry
+
 
 
 _log = logging.getLogger(__name__)
@@ -106,6 +109,7 @@ class DNSEWebSocketClient:
             transport="websockets",
             protocol=mqtt.MQTTv311,
         )
+        self._client.enable_logger(_log)
         
         # Set authentication
         self._client.username_pw_set(
@@ -154,42 +158,41 @@ class DNSEWebSocketClient:
     
     def subscribe(self, symbol: str) -> None:
         """
-        Subscribe to price updates for a symbol.
-        
-        Parameters
-        ----------
-        symbol : str
-            Symbol to subscribe to (e.g., "VNM", "VN30F2412").
+        Subscribe to both Stock Info (Trades) and Top Price (Bid/Ask).
         """
+        self.subscribe_stock_info(symbol)
+        self.subscribe_top_price(symbol)
+
+    def subscribe_stock_info(self, symbol: str) -> None:
         if not self._is_connected or self._client is None:
-            _log.warning(f"Not connected, queuing subscription for {symbol}")
-            self._subscribed_symbols.add(symbol)
+            _log.warning(f"Not connected, queuing StockInfo for {symbol}")
+            self._subscribed_symbols.add(f"INFO:{symbol}")
             return
         
-        topic = f"stock/{symbol}"
+        topic = MQTT_TOPIC_STOCK_INFO.format(symbol=symbol)
         self._client.subscribe(topic, qos=0)
-        self._subscribed_symbols.add(symbol)
-        
-        _log.info(f"Subscribed to {topic}")
-    
-    def unsubscribe(self, symbol: str) -> None:
-        """
-        Unsubscribe from price updates for a symbol.
-        
-        Parameters
-        ----------
-        symbol : str
-            Symbol to unsubscribe from.
-        """
-        if symbol not in self._subscribed_symbols:
+        self._subscribed_symbols.add(f"INFO:{symbol}")
+        _log.info(f"Subscribed to StockInfo: {topic}")
+
+    def subscribe_top_price(self, symbol: str) -> None:
+        if not self._is_connected or self._client is None:
+            _log.warning(f"Not connected, queuing TopPrice for {symbol}")
+            self._subscribed_symbols.add(f"TOP:{symbol}")
             return
         
+        topic = MQTT_TOPIC_TOP_PRICE.format(symbol=symbol)
+        self._client.subscribe(topic, qos=0)
+        self._subscribed_symbols.add(f"TOP:{symbol}")
+        _log.info(f"Subscribed to TopPrice: {topic}")
+
+    def unsubscribe(self, symbol: str) -> None:
         if self._is_connected and self._client is not None:
-            topic = f"stock/{symbol}"
-            self._client.unsubscribe(topic)
-            _log.info(f"Unsubscribed from {topic}")
+             # Try unsubscribing from both
+             self._client.unsubscribe(MQTT_TOPIC_STOCK_INFO.format(symbol=symbol))
+             self._client.unsubscribe(MQTT_TOPIC_TOP_PRICE.format(symbol=symbol))
         
-        self._subscribed_symbols.discard(symbol)
+        self._subscribed_symbols.discard(f"INFO:{symbol}")
+        self._subscribed_symbols.discard(f"TOP:{symbol}")
     
     def _on_mqtt_connect(self, client, userdata, flags, rc):
         """Handle MQTT connection."""
@@ -198,8 +201,21 @@ class DNSEWebSocketClient:
             self._is_connected = True
             
             # Resubscribe to queued symbols
-            for symbol in self._subscribed_symbols:
-                topic = f"stock/{symbol}"
+            for item in self._subscribed_symbols:
+                # Handle both legacy format and new format if any
+                if ":" in item:
+                    type_, symbol = item.split(":", 1)
+                else:
+                    type_ = "INFO"
+                    symbol = item
+                
+                if type_ == "INFO":
+                    topic = MQTT_TOPIC_STOCK_INFO.format(symbol=symbol)
+                elif type_ == "TOP":
+                    topic = MQTT_TOPIC_TOP_PRICE.format(symbol=symbol)
+                else:
+                    topic = MQTT_TOPIC_STOCK_INFO.format(symbol=symbol)
+                
                 client.subscribe(topic, qos=0)
                 _log.info(f"Resubscribed to {topic}")
             
@@ -231,14 +247,23 @@ class DNSEWebSocketClient:
             payload = message.payload.decode("utf-8")
             data = json.loads(payload)
             
-            # Extract symbol from topic (format: stock/{symbol})
-            if topic.startswith("stock/"):
-                symbol = topic[6:]
-            else:
-                symbol = data.get("symbol", "")
+            tick = None
             
-            # Parse market data tick
-            tick = self._parse_tick(symbol, data)
+            # Identify message type based on topic
+            if "stockinfo" in topic:
+                if "/symbol/" in topic:
+                    symbol = topic.split("/symbol/")[-1]
+                else:
+                    symbol = data.get("symbol", "")
+                tick = self._parse_stock_info(symbol, data)
+                
+            elif "topprice" in topic:
+                _log.info(f"TopPrice Payload: {payload}")
+                if "/symbol/" in topic:
+                    symbol = topic.split("/symbol/")[-1]
+                else:
+                    symbol = data.get("symbol", "")
+                tick = self._parse_top_price(symbol, data)
             
             if tick is not None and self._on_tick is not None:
                 if self._loop is not None:
@@ -249,53 +274,76 @@ class DNSEWebSocketClient:
         except Exception as e:
             _log.error(f"Error processing message: {e}")
     
-    def _parse_tick(self, symbol: str, data: dict) -> Optional[DNSEMarketDataTick]:
-        """Parse raw MQTT message into DNSEMarketDataTick."""
-        try:
-            # Parse timestamp
-            timestamp_str = data.get("time") or data.get("timestamp")
-            if timestamp_str:
-                timestamp = datetime.fromisoformat(timestamp_str.replace("Z", "+00:00"))
-            else:
-                timestamp = datetime.now()
+    def _parse_stock_info(self, symbol: str, data: dict) -> Optional[DNSEMarketDataTick]:
+        return DNSEMarketDataTick(
+            symbol=symbol,
+            timestamp=datetime.now(),
+            last_price=Decimal(str(data.get("matchPrice") or data.get("lastPrice") or 0)),
+            last_volume=int(data.get("matchQuantity") or data.get("lastVolume") or 0),
+            total_volume=int(data.get("totalVolumeTraded") or 0),
+            total_value=Decimal(str(data.get("grossTradeAmount") or 0)),
+            bid_price=Decimal("0"), bid_volume=0, ask_price=Decimal("0"), ask_volume=0,
+            open_price=Decimal(str(data.get("openPrice", 0))),
+            high_price=Decimal(str(data.get("highestPrice") or data.get("highPrice") or 0)),
+            low_price=Decimal(str(data.get("lowestPrice") or data.get("lowPrice") or 0)),
+            close_price=Decimal(str(data.get("referencePrice") or data.get("closePrice") or 0)),
+        )
+
+    def _parse_top_price(self, symbol: str, data: dict) -> Optional[DNSEMarketDataTick]:
+        # TopPrice has Bid/Ask info
+        
+        # Parse Bids
+        bids = []
+        raw_bids = data.get("bid") or []
+        for b in raw_bids:
+            try:
+                price = Decimal(str(b.get("price", 0)))
+                qty = int(b.get("qtty") or b.get("quantity") or 0)
+                if price > 0 and qty > 0:
+                    bids.append(DNSEOrderBookEntry(price=price, quantity=qty))
+            except: 
+                pass
+                
+        # Parse Asks (payload uses "offer" usually)
+        asks = []
+        raw_asks = data.get("offer") or data.get("ask") or []
+        for a in raw_asks:
+            try:
+                price = Decimal(str(a.get("price", 0)))
+                qty = int(a.get("qtty") or a.get("quantity") or 0)
+                if price > 0 and qty > 0:
+                    asks.append(DNSEOrderBookEntry(price=price, quantity=qty))
+            except:
+                pass
+        
+        # Best Bid/Ask for backward compatibility
+        best_bid = bids[0] if bids else DNSEOrderBookEntry(Decimal(0), 0)
+        best_ask = asks[0] if asks else DNSEOrderBookEntry(Decimal(0), 0)
+
+        return DNSEMarketDataTick(
+            symbol=symbol,
+            timestamp=datetime.now(),
+            last_price=Decimal("0"), last_volume=0, total_volume=0, total_value=Decimal("0"),
+            open_price=Decimal("0"), high_price=Decimal("0"), low_price=Decimal("0"), close_price=Decimal("0"),
             
-            # Create tick
-            return DNSEMarketDataTick(
-                symbol=symbol,
-                timestamp=timestamp,
-                last_price=Decimal(str(data.get("lastPrice", 0))),
-                last_volume=int(data.get("lastVolume", 0)),
-                bid_price=Decimal(str(data.get("bidPrice", 0))),
-                bid_volume=int(data.get("bidVolume", 0)),
-                ask_price=Decimal(str(data.get("askPrice", 0))),
-                ask_volume=int(data.get("askVolume", 0)),
-                open_price=Decimal(str(data.get("openPrice", 0))),
-                high_price=Decimal(str(data.get("highPrice", 0))),
-                low_price=Decimal(str(data.get("lowPrice", 0))),
-                close_price=Decimal(str(data.get("closePrice", 0))) if data.get("closePrice") else None,
-                total_volume=int(data.get("totalVolume", 0)),
-                total_value=Decimal(str(data.get("totalValue", 0))),
-            )
-        except Exception as e:
-            _log.error(f"Failed to parse tick for {symbol}: {e}")
-            return None
+            bid_price=best_bid.price,
+            bid_volume=best_bid.quantity,
+            ask_price=best_ask.price,
+            ask_volume=best_ask.quantity,
+            
+            bids=bids,
+            asks=asks
+        )
+
     
     def update_token(self, jwt_token: str) -> None:
         """
         Update JWT token for reconnection.
-        
-        Parameters
-        ----------
-        jwt_token : str
-            New JWT token.
         """
         self._jwt_token = jwt_token
         
         # If connected, need to reconnect with new token
         if self._is_connected:
             _log.info("Token updated, reconnecting...")
-            symbols = self._subscribed_symbols.copy()
             self.disconnect()
             self.connect()
-            for symbol in symbols:
-                self.subscribe(symbol)

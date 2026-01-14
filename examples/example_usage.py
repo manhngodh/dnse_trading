@@ -13,16 +13,30 @@ Usage:
 """
 import asyncio
 import os
+import logging
 from decimal import Decimal
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+try:
+    from dotenv import load_dotenv
+    os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.env'))
+    load_dotenv()
+except ImportError:
+    pass
 
 # Add parent path for imports
 import sys
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from adapters.dnse.common.enums import DNSEOrderSide, DNSEOrderType
-from adapters.dnse.http.client import DNSEHttpClient
-from adapters.dnse.websocket.client import DNSEWebSocketClient
-from adapters.dnse.common.types import DNSEMarketDataTick
+from dnse_trading.common.enums import DNSEOrderSide, DNSEOrderType
+from dnse_trading.rest.client import DNSEHttpClient
+from dnse_trading.websocket.client import DNSEWebSocketClient
+from dnse_trading.common.types import DNSEMarketDataTick
 
 
 # ============================================================================
@@ -129,11 +143,9 @@ async def example_market_data():
         
         # Connect and subscribe
         ws_client.connect()
-        ws_client.subscribe("VNM")
-        ws_client.subscribe("VIC")
-        ws_client.subscribe("VCB")
+        ws_client.subscribe("VND")
         
-        print("Subscribed to VNM, VIC, VCB. Waiting for ticks...")
+        print("Subscribed to VND. Waiting for ticks...")
         print("(Press Ctrl+C to stop)\n")
         
         # Wait for some ticks (or timeout)
@@ -299,7 +311,7 @@ async def main():
     await example_account_info()
     
     # Uncomment to test other examples:
-    # await example_market_data()
+    await example_market_data()
     # await example_trading()
     # await example_derivatives()
     

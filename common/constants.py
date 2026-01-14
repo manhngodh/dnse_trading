@@ -90,11 +90,14 @@ DERIVATIVE_ASSETS_ENDPOINT = "/order-service/derivative/assets"
 # Market Data Topics (MQTT)
 # ============================================================================
 
-# Price topic pattern: stock/{symbol}
-MQTT_PRICE_TOPIC_PATTERN = "stock/{symbol}"
+# Stock Info (Last price, volume, high, low, etc.)
+MQTT_TOPIC_STOCK_INFO = "plaintext/quotes/krx/mdds/stockinfo/v1/roundlot/symbol/{symbol}"
 
-# Order matching topic
-MQTT_ORDER_MATCH_TOPIC_PATTERN = "order/{symbol}"
+# Top Price (Best Bid/Ask)
+MQTT_TOPIC_TOP_PRICE = "plaintext/quotes/krx/mdds/topprice/v1/roundlot/symbol/{symbol}"
+
+# Trade Tick (Matched Execution)
+MQTT_TOPIC_TICK = "plaintext/quotes/krx/mdds/tick/v1/roundlot/symbol/{symbol}"
 
 
 # ============================================================================

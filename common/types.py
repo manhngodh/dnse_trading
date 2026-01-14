@@ -103,6 +103,13 @@ class DNSEDerivativePosition:
 
 
 @dataclass
+class DNSEOrderBookEntry:
+    """Entry in the order book."""
+    price: Decimal
+    quantity: int
+
+
+@dataclass
 class DNSEMarketDataTick:
     """DNSE market data tick from WebSocket."""
     symbol: str
@@ -119,6 +126,9 @@ class DNSEMarketDataTick:
     close_price: Optional[Decimal]
     total_volume: int
     total_value: Decimal
+    # Depth
+    bids: Optional[list[DNSEOrderBookEntry]] = None
+    asks: Optional[list[DNSEOrderBookEntry]] = None
 
 
 @dataclass 

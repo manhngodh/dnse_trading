@@ -1,0 +1,16 @@
+2026-01-06 08:43:44,613 - IntradayScalpTUI - INFO - Initialized Scalp TUI for VND
+2026-01-06 08:43:44,613 - IntradayScalpTUI - INFO - Connecting HTTP...
+2026-01-06 08:43:44,613 - dnse_trading.rest.auth - INFO - Attempting login for user: 0968926458
+2026-01-06 08:43:45,374 - dnse_trading.rest.auth - INFO - Login successful. JWT expires at: 2026-01-06 16:43:45.374195
+2026-01-06 08:43:45,374 - dnse_trading.rest.client - INFO - DNSE HTTP client connected
+2026-01-06 08:43:46,061 - IntradayScalpTUI - INFO - Connected: Ngô Xuân Mạnh
+2026-01-06 08:43:46,082 - dnse_trading.websocket.client - INFO - Connecting to datafeed-lts-krx.dnse.com.vn:443
+2026-01-06 08:43:47,425 - dnse_trading.websocket.client - INFO - Connected to DNSE market data WebSocket
+2026-01-06 08:43:47,425 - IntradayScalpTUI - INFO - WebSocket Connected
+2026-01-06 08:43:47,426 - dnse_trading.websocket.client - INFO - Subscribed to StockInfo: plaintext/quotes/krx/mdds/stockinfo/v1/roundlot/symbol/VND
+2026-01-06 08:43:47,427 - dnse_trading.websocket.client - INFO - Subscribed to TopPrice: plaintext/quotes/krx/mdds/topprice/v1/roundlot/symbol/VND
+2026-01-06 08:43:47,871 - dnse_trading.websocket.client - INFO - TopPrice Payload: {"marketId":"MARKET_ID_STO","boardId":"BOARD_ID_G1","isin":"VN000000VND7","symbol":"VND","sendingTime":"2026-01-06T07:43:45.516Z","bid":[{"price":18.65,"qtty":7690.0},{"price":18.6,"qtty":19160.0},{"price":18.55,"qtty":10280.0}],"offer":[{"price":18.7,"qtty":710.0},{"price":18.8,"qtty":1490.0},{"price":18.85,"qtty":4590.0}],"boardIdOriginal":"BOARD_ID_G1"}
+2026-01-06 08:43:53,895 - dnse_trading.websocket.client - INFO - TopPrice Payload: {"marketId":"MARKET_ID_STO","boardId":"BOARD_ID_G1","isin":"VN000000VND7","symbol":"VND","sendingTime":"2026-01-06T07:43:53.759Z","bid":[{"price":18.65,"qtty":7880.0},{"price":18.6,"qtty":19160.0},{"price":18.55,"qtty":10280.0}],"offer":[{"price":18.7,"qtty":710.0},{"price":18.8,"qtty":1490.0},{"price":18.85,"qtty":4590.0}],"boardIdOriginal":"BOARD_ID_G1"}
+2026-01-06 08:43:58,903 - dnse_trading.websocket.client - WARNING - Disconnected from DNSE market data (rc=0)
+2026-01-06 08:43:58,907 - dnse_trading.websocket.client - INFO - Disconnected from market data WebSocket
+2026-01-06 08:43:58,908 - IntradayScalpTUI - INFO - WebSocket Disconnected

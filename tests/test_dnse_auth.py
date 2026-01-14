@@ -12,12 +12,13 @@ import pytest
 # Import modules under test
 import sys
 import os
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add parent directory of dnse_trading to path regarding the file location tests/test_dnse_auth.py
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from adapters.dnse.common.enums import DNSEOrderSide, DNSEOrderType, DNSEOrderStatus
-from adapters.dnse.common.types import DNSETokens, DNSEOrderResponse
-from adapters.dnse.http.auth import DNSEAuthProvider
-from adapters.dnse.parsing.orders import parse_order_response, parse_account_info
+from dnse_trading.common.enums import DNSEOrderSide, DNSEOrderType, DNSEOrderStatus
+from dnse_trading.common.types import DNSETokens, DNSEOrderResponse
+from dnse_trading.rest.auth import DNSEAuthProvider
+from dnse_trading.parsing.orders import parse_order_response, parse_account_info
 
 
 class TestDNSEAuthProvider:
