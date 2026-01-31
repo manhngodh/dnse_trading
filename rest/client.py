@@ -330,6 +330,7 @@ class DNSEHttpClient:
         }
         
         _log.info(f"Placing order: {side.value} {quantity} {symbol} @ {price}")
+        print(f"DEBUG: Order Payload: {payload}")
         
         return await self._request(
             "POST", url, json_data=payload, require_trading_token=True

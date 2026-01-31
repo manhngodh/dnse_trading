@@ -45,16 +45,16 @@ SUB_ACCOUNTS_ENDPOINT = "/user-service/api/accounts"
 # ============================================================================
 
 # Place order
-BASE_ORDER_ENDPOINT = "/order-service/v2/orders"
+BASE_ORDER_ENDPOINT = "/order-service/v1/orders"
 
 # Query orders (uses same endpoint with query params)
-# GET /order-service/v2/orders?accountNo={accountNo}
+# GET /order-service/v1/orders?accountNo={accountNo}
 
 # Order detail
-# GET /order-service/v2/orders/{orderId}
+# GET /order-service/v1/orders/{orderId}
 
 # Cancel order
-# DELETE /order-service/v2/orders/{orderId}?accountNo={accountNo}
+# DELETE /order-service/v1/orders/{orderId}?accountNo={accountNo}
 
 # Loan packages
 BASE_LOAN_PACKAGES_ENDPOINT = "/order-service/loan-packages"

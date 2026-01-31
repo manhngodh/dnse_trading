@@ -20,7 +20,7 @@ def get_account_info_url(base_url: str) -> str:
 
 def get_sub_accounts_url(base_url: str) -> str:
     """Get sub-accounts endpoint URL."""
-    return f"{base_url}/user-service/api/accounts"
+    return f"{base_url}/order-service/accounts"
 
 
 # ============================================================================
@@ -29,17 +29,17 @@ def get_sub_accounts_url(base_url: str) -> str:
 
 def get_base_orders_url(base_url: str) -> str:
     """Get base orders endpoint URL for placing orders."""
-    return f"{base_url}/order-service/v2/orders"
+    return f"{base_url}/order-service/v1/orders"
 
 
 def get_base_order_detail_url(base_url: str, order_id: int) -> str:
     """Get base order detail endpoint URL."""
-    return f"{base_url}/order-service/v2/orders/{order_id}"
+    return f"{base_url}/order-service/v1/orders/{order_id}"
 
 
 def get_base_cancel_order_url(base_url: str, order_id: int, account_no: str) -> str:
     """Get base cancel order endpoint URL."""
-    return f"{base_url}/order-service/v2/orders/{order_id}?accountNo={account_no}"
+    return f"{base_url}/order-service/v1/orders/{order_id}?accountNo={account_no}"
 
 
 def get_base_loan_packages_url(base_url: str) -> str:
